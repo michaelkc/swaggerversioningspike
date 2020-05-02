@@ -1,0 +1,1 @@
+﻿These are tests of business logic independent of versioning. It can reference whatever it wants.
