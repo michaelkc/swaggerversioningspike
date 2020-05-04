@@ -9,19 +9,10 @@ using Seges.CvrServices.Contract.Infrastructure;
 
 namespace Seges.CvrServices.Contract
 {
-    //[TestFixtureSource(typeof(VersionsTestFixtureSource))]
-    internal class ContractTests : IVersionedTestFixture
+    internal class ContractTests
     {
-        public string CurrentVersion { get; }
-
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-
-        // When specifying TestFixtureSource
-        //public ContractTests(string currentVersion)
-        //{
-        //    CurrentVersion = currentVersion;
-        //}
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -30,8 +21,7 @@ namespace Seges.CvrServices.Contract
             _client = _factory.CreateClient();
         }
 
-        [TestCaseSource(typeof(VersionsTestCaseSource), "TestCases", new object[] { new[] { "V1"} })]
-        //[VersionsSupportedByTest("V1","V2")]
+        [TestCaseSource(typeof(ApiVersions), ApiVersions.SourceName, new object[] { new[]{ApiVersions.V1}})]
         public async Task RegressionTestForV1NotV2(string version)
         {
             // Arrange
@@ -52,7 +42,9 @@ namespace Seges.CvrServices.Contract
             StringAssert.Contains("temperatureF", responseContent);
         }
 
-        [TestCaseSource(typeof(VersionsTestCaseSource), "TestCases", new object[] { new[] { "V2" } })]
+
+
+        [TestCaseSource(typeof(ApiVersions), ApiVersions.SourceName, new object[] { new[] { ApiVersions.V2}})]
         public async Task RegressionTestForV2NotV1(string version)
         {
             // Arrange
@@ -73,8 +65,29 @@ namespace Seges.CvrServices.Contract
             StringAssert.Contains("temperatureF", responseContent);
         }
 
-        [TestCaseSource(typeof(VersionsTestCaseSource),"TestCases",new object[]{new[]{"V1","V2"}})]
-        public async Task RegressionTestForAllVersions(string version)
+        [TestCaseSource(typeof(ApiVersions), ApiVersions.SourceName, new object[] { new[] { ApiVersions.All }})]
+        public async Task RegressionTestForAllVersionsImplicit(string version)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/weatherforecast/{version}/");
+
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine("Response:");
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(responseContent);
+
+            // Assert
+            Assert.True(response.IsSuccessStatusCode);
+            StringAssert.Contains("temperatureF", responseContent);
+        }
+
+        [TestCaseSource(typeof(ApiVersions), ApiVersions.SourceName, new object[] { new[] { ApiVersions.V1, ApiVersions.V2 } })]
+        public async Task RegressionTestForAllVersionsExplicit(string version)
         {
             // Arrange
             var client = _factory.CreateClient();
