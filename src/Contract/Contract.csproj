@@ -4,8 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <IsPackable>false</IsPackable>
-    <AssemblyName>Seges.CvrServices.Contract.V1</AssemblyName>
-    <RootNamespace>Seges.CvrServices.Contract.V1</RootNamespace>
+    <AssemblyName>Seges.CvrServices.Contract</AssemblyName>
+    <RootNamespace>Seges.CvrServices.Contract</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
